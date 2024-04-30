@@ -12,14 +12,15 @@ export default function AppRouter() {
     <main className='container'>
       <Router>        
         <Routes>
-          <Route path='/'>
+          <Route path='/exercise/'>
+            <Route index element={<ExerciseTable />} />
+            <Route path='create' element={<ExerciseForm />} />
+            <Route path=':id' element={<ExerciseDetail />} />
+          </Route>
+          <Route path='/exercise-group/'>
             <Route index element={< GroupExerciseTable/>} />
-            <Route path='create-exercise-group' element={<ExerciseGroupForm />} />
-            <Route path='create-exercise' element={<ExerciseForm />} />
-            <Route path='list-exercise' element={<ExerciseTable />} />
-            <Route path='list-exercise-group/:id' element={<ExerciseGroupDetail />} />
-            <Route path='list-exercise-group' element={<ExerciseGroupTable />} />
-            <Route path='list-exercise/:id' element={<ExerciseDetail />} />
+            <Route path='create' element={<ExerciseGroupForm />} />
+            <Route path=':id' element={<ExerciseGroupDetail />} />
           </Route>
         </Routes>        
       </Router>

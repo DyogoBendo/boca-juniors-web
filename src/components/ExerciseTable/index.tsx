@@ -7,6 +7,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import bocaJuniorsAPI from '../../shared/boca-juniors-api';
 import { Exercise } from '../../types/Exercise';
+import { Link } from 'react-router-dom';
 
 
 async function listExercise(){
@@ -35,6 +36,8 @@ export default function ExerciseTable() {
             <TableRow
               key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              component={Link}
+              to={`/exercise/${row.id}`}
             >
               <TableCell component="th" scope="row">
                 {row.title}

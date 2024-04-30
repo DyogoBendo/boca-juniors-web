@@ -1,32 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
-import { Exercise } from '../../types/Exercise';
-import bocaJuniorsAPI from '../../shared/boca-juniors-api';
+import React, { useEffect, useState } from "react";
+import {
+  TextField,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  Autocomplete,
+  Stack,
+} from "@mui/material";
+import { Exercise } from "../../types/Exercise";
+import bocaJuniorsAPI from "../../shared/boca-juniors-api";
+import { ExerciseGroupTextField, FormFieldContainer } from "./style";
 
-async function getExercises(){
-    const response = await bocaJuniorsAPI.get('/exercise')
+async function getExercises() {
+  const response = await bocaJuniorsAPI.get("/exercise");
 
-    return response.data
+  return response.data;
 }
-const initialExercises:Exercise[] = await getExercises()
-console.log("initial exercises", initialExercises)
+const initialExercises: Exercise[] = await getExercises();
+console.log("initial exercises", initialExercises);
 
 const ExerciseGroupForm: React.FC = () => {
-  const [formData, setFormData] = useState({ name: '', open: false });
-  const [dynamicFields, setDynamicFields] = useState<{ id: number ; key:number; name: string}[]>([]);
-  const [exercises, ] = useState<Exercise[]>(initialExercises)
-  const [exercisesOptions, setExercisesOptions] = useState<{label: string, id:number}[]>([])
-  const[usedExercises, setUsedExercises] = useState<number[]>([])
+  const [formData, setFormData] = useState({ name: "", open: false });
+  const [dynamicFields, setDynamicFields] = useState<
+    { id: number; key: number; name: string }[]
+  >([]);
+  const [exercises] = useState<Exercise[]>(initialExercises);
+  const [exercisesOptions, setExercisesOptions] = useState<
+    { label: string; id: number }[]
+  >([]);
+  const [usedExercises, setUsedExercises] = useState<number[]>([]);
 
   useEffect(() => {
-    const tmp = [{label: '', id: -1}, ...exercises
-    .filter(exercise => !usedExercises.includes(exercise.id))
-    .map(exercise => ({ label: `${exercise.title} - ${exercise.tag} - ${exercise.difficulty}` , id: exercise.id}))]
+    const tmp = [
+      { label: "", id: -1 },
+      ...exercises
+        .filter((exercise) => !usedExercises.includes(exercise.id))
+        .map((exercise) => ({
+          label: `${exercise.title} - ${exercise.tag} - ${exercise.difficulty}`,
+          id: exercise.id,
+        })),
+    ];
 
-
-    setExercisesOptions(
-        tmp
-        );
+    setExercisesOptions(tmp);
   }, [exercises, usedExercises]); // Watch for changes in exercises array
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,84 +56,95 @@ const ExerciseGroupForm: React.FC = () => {
 
   const handleAddField = () => {
     const newId = dynamicFields.length + 1;
-    setDynamicFields([...dynamicFields, { key: newId, id: -1, name: '' }]);
+    setDynamicFields([...dynamicFields, { key: newId, id: -1, name: "" }]);
   };
 
-  const handleDynamicFieldChange = (currentField: { id: number; label: string } | null, key: number) => {    
-    //const { value } = event.target;    
-    
-    if(currentField == null) return;
-    console.log("current field", currentField)
+  const handleDynamicFieldChange = (
+    currentField: { id: number; label: string } | null,
+    key: number
+  ) => {
+    //const { value } = event.target;
+
+    if (currentField == null) return;
+    console.log("current field", currentField);
 
     let oldId = -1;
-    const updatedFields = dynamicFields.map(field => {
-            let tmp;
-            if(field.key === key){
-                oldId = field.id == null ? -1 : field.id
-                tmp = { ...field, name: currentField.label, id: currentField.id }
-            } else{
-                tmp =field
-            }        
-            return tmp
-        }
-    );
+    const updatedFields = dynamicFields.map((field) => {
+      let tmp;
+      if (field.key === key) {
+        oldId = field.id == null ? -1 : field.id;
+        tmp = { ...field, name: currentField.label, id: currentField.id };
+      } else {
+        tmp = field;
+      }
+      return tmp;
+    });
     setDynamicFields(updatedFields);
-    setUsedExercises([...usedExercises.filter(exercise => exercise != oldId), currentField.id])
+    setUsedExercises([
+      ...usedExercises.filter((exercise) => exercise != oldId),
+      currentField.id,
+    ]);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Form Data:', formData);
-    console.log('Dynamic Fields:', dynamicFields);
-    
+    console.log("Form Data:", formData);
+    console.log("Dynamic Fields:", dynamicFields);
+
     const data = {
-        ...formData,
-        "exerciseIdList": usedExercises.filter(exercise => exercise != -1)
-    }
+      ...formData,
+      exerciseIdList: usedExercises.filter((exercise) => exercise != -1),
+    };
 
-    console.log(data)
+    console.log(data);
 
-    const response = await bocaJuniorsAPI.post('/exercise-group', data)
+    const response = await bocaJuniorsAPI.post("/exercise-group", data);
 
-    console.log(response.data)
+    console.log(response.data);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <TextField
-        name="name"
-        label="Name"
-        value={formData.name}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={formData.open}
-            onChange={handleCheckboxChange}
-            name="open"
-            color="primary"
-          />
-        }
-        label="Open"
-      />
-      {dynamicFields.map(field => (        
-        <Autocomplete          
+      <FormFieldContainer>
+        <ExerciseGroupTextField
+          name="name"
+          label="Name"
+          value={formData.name}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.open}
+              onChange={handleCheckboxChange}
+              name="open"
+              color="primary"
+            />
+          }
+          label="Aberto"
+        />
+      </FormFieldContainer>
+      {dynamicFields.map((field) => (
+        <Autocomplete
           options={exercisesOptions}
-          value={{"id": field.id, "label": field.name}}
-          key={field.key}                              
+          value={{ id: field.id, label: field.name }}
+          key={field.key}
           onChange={(e, value) => handleDynamicFieldChange(value, field.key)}
-          renderInput={(params) => <TextField {...params} label={`Exercício`} />}                    
+          renderInput={(params) => (
+            <TextField {...params} label={`Exercício`} />
+          )}
         />
       ))}
-      <Button variant="contained" onClick={handleAddField}>
-        Add Field
-      </Button>
-      <Button type="submit" variant="contained" color="primary">
-        Submit
-      </Button>
+      <FormFieldContainer>
+        <Button variant="contained" onClick={handleAddField}>
+          Adicionar exercício
+        </Button>
+        <Button type="submit" variant="contained" color="primary">
+          Enviar
+        </Button>
+      </FormFieldContainer>
     </form>
   );
 };

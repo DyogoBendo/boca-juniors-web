@@ -4,6 +4,12 @@ import Typography from "@mui/material/Typography";
 import bocaJuniorsAPI from "../../shared/boca-juniors-api";
 import { Exercise } from "../../types/Exercise";
 import { ExerciseWithExamples } from "../../types/ExerciseWithExamples";
+import {
+  ContentContainer,
+  ExerciseContainer,
+  ExerciseTestCaseContainer,
+  ExerciseTestCaseDataContainer
+} from "./style";
 
 export default function ExerciseDetail() {
   const { id } = useParams();
@@ -13,6 +19,7 @@ export default function ExerciseDetail() {
     async function fetchExercise() {
       try {
         const response = await bocaJuniorsAPI.get(`/exercise/${id}`);
+        console.log("oi", response.data);
         setExercise(response.data);
       } catch (error) {
         console.error("Error fetching exercise:", error);
@@ -25,9 +32,9 @@ export default function ExerciseDetail() {
   }, [id]);
 
   return (
-    <div>
+    <ContentContainer>
       {exercise && (
-        <div>
+        <ExerciseContainer>
           <Typography variant="h1" gutterBottom>
             {exercise.title}
           </Typography>
@@ -35,22 +42,32 @@ export default function ExerciseDetail() {
           <Typography variant="body1" gutterBottom>
             {exercise.description}
           </Typography>
-
-          {exercise.examples.map((example) => (
-            <div key={example.input}>
-              <Typography variant="body1" gutterBottom>
-                {example.input}
-              </Typography>
-              <br/>
-
-              <Typography variant="body1" gutterBottom>
-                {example.output}
-              </Typography>
-              <br/>              <br/>
-            </div>
-          ))}
-        </div>
+            {exercise.examples.map((example) => (
+              <ExerciseTestCaseContainer key={example.input}>
+                <ExerciseTestCaseDataContainer>
+                  <Typography variant="h6">Entrada</Typography>
+                  <Typography
+                    sx={{ whiteSpace: "pre-line" }}
+                    variant="body1"
+                    gutterBottom
+                  >
+                    {example.input}
+                  </Typography>
+                </ExerciseTestCaseDataContainer>
+                <ExerciseTestCaseDataContainer>
+                  <Typography variant="h6">Saída</Typography>
+                  <Typography
+                    sx={{ whiteSpace: "pre-line" }}
+                    variant="body1"
+                    gutterBottom
+                  >
+                    {example.output}
+                  </Typography>
+                </ExerciseTestCaseDataContainer>
+              </ExerciseTestCaseContainer>
+            ))}
+        </ExerciseContainer>
       )}
-    </div>
+    </ContentContainer>
   );
 }

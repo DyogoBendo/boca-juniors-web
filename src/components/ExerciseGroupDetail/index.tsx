@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import bocaJuniorsAPI from "../../shared/boca-juniors-api";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { ExerciseGroupWithExercises } from "../../types/ExerciseGroupWithExercises";
+import {
+  Icon,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { ExerciseGroupContainer, ExerciseGroupTitleContainer } from "./style";
 
 export default function ExerciseGroupDetail() {
   const { id } = useParams();
-  const [exerciseGroup, setExerciseGroup] = useState<ExerciseGroupWithExercises>();
+  const [exerciseGroup, setExerciseGroup] =
+    useState<ExerciseGroupWithExercises>();
 
   useEffect(() => {
     async function fetchExerciseGroup() {
@@ -26,30 +39,48 @@ export default function ExerciseGroupDetail() {
   }, [id]);
 
   return (
-    <div>
+    <ExerciseGroupContainer>
       {exerciseGroup && (
         <div>
-          <Typography variant="h1" gutterBottom>
-            {exerciseGroup.name}
-          </Typography>
+          <ExerciseGroupTitleContainer>
+            <Typography variant="h1" gutterBottom>
+              {exerciseGroup.name}
+            </Typography>
+          </ExerciseGroupTitleContainer>
 
-          {exerciseGroup.open ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
-
-          {exerciseGroup.exerciseList.map((exercise) => (
-            <div key={exercise.id}>
-              <Typography variant="h2" gutterBottom>
-                {exercise.title}
-              </Typography>
-              <Typography variant="h2" gutterBottom>
-                {exercise.tag}
-              </Typography>  
-              <Typography variant="h2" gutterBottom>
-                {exercise.difficulty}
-              </Typography>                            
-            </div>
-          ))}
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Título</TableCell>
+                  <TableCell align="center">Tag</TableCell>
+                  <TableCell align="center">Dificuldade</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {exerciseGroup.exerciseList.map((exercise) => (
+                  <TableRow
+                    key={exercise.id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    component={Link}
+                    to={`/list-exercise/${exercise.id}`}
+                  >
+                    <TableCell component="th" scope="row">
+                      {exercise.title}
+                    </TableCell>
+                    <TableCell align="center" component="th" scope="row">
+                      {exercise.tag}
+                    </TableCell>
+                    <TableCell align="center" component="th" scope="row">
+                      {exercise.difficulty}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
       )}
-    </div>
+    </ExerciseGroupContainer>
   );
 }

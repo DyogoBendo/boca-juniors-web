@@ -9,6 +9,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import bocaJuniorsAPI from '../../shared/boca-juniors-api';
 import { ExerciseGroup } from '../../types/ExerciseGroup';
+import { Link } from 'react-router-dom';
 
 
 async function listExerciseGroup(){
@@ -27,7 +28,7 @@ export default function ExerciseGroupTable() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Nome</TableCell>
+            <TableCell>NomeSafado</TableCell>
             <TableCell align="right">Concluído</TableCell>            
           </TableRow>
         </TableHead>
@@ -36,6 +37,8 @@ export default function ExerciseGroupTable() {
             <TableRow
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              component={Link}
+              to={`/exercise-group/${row.id}`}
             >
               <TableCell component="th" scope="row">
                 {row.name}
