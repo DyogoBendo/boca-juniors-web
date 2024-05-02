@@ -1,28 +1,41 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import GroupExerciseTable from './components/ExerciseGroupTable';
-import ExerciseForm from './components/ExerciseForm';
-import ExerciseTable from './components/ExerciseTable';
-import ExerciseDetail from './components/ExerciseDetail';
-import ExerciseGroupForm from './components/ExerciseGroupForm';
-import ExerciseGroupTable from './components/ExerciseGroupTable';
-import ExerciseGroupDetail from './components/ExerciseGroupDetail';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import ExerciseTable from "./pages/ListExercises";
+import LoginForm from "./pages/Login";
+import { useUser } from "./context/auth";
+import ExerciseForm from "./pages/CreateExercise";
+import ExerciseDetail from "./pages/ExerciseDetail";
+import ExerciseGroupTable from "./pages/ListExerciseGroups";
+import ExerciseGroupForm from "./pages/CreateExerciseGroup";
+import ExerciseGroupDetail from "./pages/ExerciseGroupDetail";
+import SubmissionTable from "./pages/ListSubmission";
+import SubmissionDetail from "./pages/SubmissionDetail";
 
 export default function AppRouter() {
+  const {user, setUser} = useUser()
+  console.log("usuario atual", user)
   return (
-    <main className='container'>
-      <Router>        
+    <main className="container">
+      <Router>
         <Routes>
-          <Route path='/exercise/'>
-            <Route index element={<ExerciseTable />} />
-            <Route path='create' element={<ExerciseForm />} />
-            <Route path=':id' element={<ExerciseDetail />} />
+          <Route path="/">
+            <Route index element={!user ? <LoginForm /> : <Navigate to="/exercise-group" replace />} />
+            <Route path="login" element={!user ? <LoginForm /> : <Navigate to="/exercise-group" replace />} />
           </Route>
-          <Route path='/exercise-group/'>
-            <Route index element={< GroupExerciseTable/>} />
-            <Route path='create' element={<ExerciseGroupForm />} />
-            <Route path=':id' element={<ExerciseGroupDetail />} />
+          <Route path="/exercise/">
+            <Route index element={user ? <ExerciseTable /> : <Navigate to="/" replace />} />
+            <Route path="create" element={user ? user === "admin" ? <ExerciseForm /> : <ExerciseGroupTable/> : <Navigate to="/" replace />} />
+            <Route path=":id" element={user ? <ExerciseDetail /> : <Navigate to="/" replace />} />
           </Route>
-        </Routes>        
+          <Route path="/exercise-group/">
+            <Route index element={user ? <ExerciseGroupTable /> : <Navigate to="/" replace />} />
+            <Route path="create" element={user ? user === "admin" ? <ExerciseForm /> : <ExerciseGroupTable/> : <Navigate to="/" replace />} />
+            <Route path=":id" element={user ? <ExerciseGroupDetail /> : <Navigate to="/" replace />} />
+          </Route>
+          <Route path="/submission/">
+            <Route index element={user ? <SubmissionTable /> : <Navigate to="/" replace />} />            
+            <Route path=":id" element={user ? <SubmissionDetail /> : <Navigate to="/" replace />} />
+          </Route>
+        </Routes>
       </Router>
     </main>
   );

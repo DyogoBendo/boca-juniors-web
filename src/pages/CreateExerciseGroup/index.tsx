@@ -6,10 +6,17 @@ import {
   Checkbox,
   Autocomplete,
   Stack,
+  Container,
 } from "@mui/material";
 import { Exercise } from "../../types/Exercise";
 import bocaJuniorsAPI from "../../shared/boca-juniors-api";
-import { ExerciseGroupTextField, FormFieldContainer } from "./style";
+import {
+  ExerciseAutocomplete,
+  ExerciseGroupTextField,
+  FormFieldContainer,
+} from "./style";
+import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
 
 async function getExercises() {
   const response = await bocaJuniorsAPI.get("/exercise");
@@ -29,6 +36,7 @@ const ExerciseGroupForm: React.FC = () => {
     { label: string; id: number }[]
   >([]);
   const [usedExercises, setUsedExercises] = useState<number[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const tmp = [
@@ -101,51 +109,58 @@ const ExerciseGroupForm: React.FC = () => {
     const response = await bocaJuniorsAPI.post("/exercise-group", data);
 
     console.log(response.data);
+
+    navigate(`/exercise-group/${response.data.id}`);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormFieldContainer>
-        <ExerciseGroupTextField
-          name="name"
-          label="Name"
-          value={formData.name}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.open}
-              onChange={handleCheckboxChange}
-              name="open"
-              color="primary"
+    <>
+      <Header/>
+      <Container>
+        <form onSubmit={handleSubmit}>
+          <FormFieldContainer>
+            <ExerciseGroupTextField
+              name="name"
+              label="Nome"
+              value={formData.name}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
             />
-          }
-          label="Aberto"
-        />
-      </FormFieldContainer>
-      {dynamicFields.map((field) => (
-        <Autocomplete
-          options={exercisesOptions}
-          value={{ id: field.id, label: field.name }}
-          key={field.key}
-          onChange={(e, value) => handleDynamicFieldChange(value, field.key)}
-          renderInput={(params) => (
-            <TextField {...params} label={`Exercício`} />
-          )}
-        />
-      ))}
-      <FormFieldContainer>
-        <Button variant="contained" onClick={handleAddField}>
-          Adicionar exercício
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-          Enviar
-        </Button>
-      </FormFieldContainer>
-    </form>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.open}
+                  onChange={handleCheckboxChange}
+                  name="open"
+                  color="primary"
+                />
+              }
+              label="Aberto"
+            />
+          </FormFieldContainer>
+          {dynamicFields.map((field) => (
+            <ExerciseAutocomplete
+              options={exercisesOptions}
+              value={{ id: field.id, label: field.name }}
+              key={field.key}
+              onChange={(e, value) => handleDynamicFieldChange(value, field.key)}
+              renderInput={(params) => (
+                <TextField {...params} label={`Exercício`} />
+              )}
+            />
+          ))}
+          <FormFieldContainer>
+            <Button variant="contained" onClick={handleAddField}>
+              Adicionar exercício
+            </Button>
+            <Button type="submit" variant="contained" color="primary">
+              Salvar
+            </Button>
+          </FormFieldContainer>
+        </form>
+      </Container>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Stack, StackProps, TextField, styled } from "@mui/material";
+import { Autocomplete, AutocompleteProps, Stack, StackProps, TextField, styled } from "@mui/material";
 
 export const FormFieldContainer = styled(Stack)<StackProps>(({theme}) => ({
     marginTop: theme.spacing(1),
@@ -9,4 +9,8 @@ export const FormFieldContainer = styled(Stack)<StackProps>(({theme}) => ({
 
 export const ExerciseGroupTextField = styled(TextField)<StackProps>(({theme}) => ({
     width: '80%'
+}))
+
+export const ExerciseAutocomplete = styled(Autocomplete)<AutocompleteProps>(({theme}) => ({
+    marginBottom: theme.spacing(1)
 }))
