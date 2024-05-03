@@ -28,7 +28,7 @@ export default function AppRouter() {
           </Route>
           <Route path="/exercise-group/">
             <Route index element={user ? <ExerciseGroupTable /> : <Navigate to="/" replace />} />
-            <Route path="create" element={user ? user === "admin" ? <ExerciseForm /> : <ExerciseGroupTable/> : <Navigate to="/" replace />} />
+            <Route path="create" element={user ? user === "admin" ? <ExerciseGroupForm /> : <ExerciseGroupTable/> : <Navigate to="/" replace />} />
             <Route path=":id" element={user ? <ExerciseGroupDetail /> : <Navigate to="/" replace />} />
           </Route>
           <Route path="/submission/">
