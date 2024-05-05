@@ -15,8 +15,9 @@ import {
   ExerciseGroupTextField,
   FormFieldContainer,
 } from "./style";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header";
+import { ExerciseGroupWithExercises } from "../../types/ExerciseGroupWithExercises";
 
 async function getExercises() {
   const response = await bocaJuniorsAPI.get("/exercise");
@@ -26,7 +27,7 @@ async function getExercises() {
 const initialExercises: Exercise[] = await getExercises();
 console.log("initial exercises", initialExercises);
 
-const ExerciseGroupForm: React.FC = () => {
+const ExerciseGroupEditForm: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", open: false });
   const [dynamicFields, setDynamicFields] = useState<
     { id: number; key: number; name: string }[]
@@ -37,6 +38,48 @@ const ExerciseGroupForm: React.FC = () => {
   >([]);
   const [usedExercises, setUsedExercises] = useState<number[]>([]);
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [exerciseGroup, setExerciseGroup] =
+  useState<ExerciseGroupWithExercises>();
+
+  const generateExerciseLabel = (exercise: Exercise) => {
+    return `${exercise.id} - ${exercise.title} - ${exercise.tag} - ${exercise.difficulty}`
+  }
+
+  useEffect(() => {
+    async function fetchExerciseGroup() {
+      try {        
+        const response = await bocaJuniorsAPI.get(`/exercise-group/${id}`);
+        console.log("data")
+        setExerciseGroup(response.data);    
+        console.log("banana") 
+      } catch (error) {
+        console.error("Error fetching exercise Group:", error);
+      }
+    }
+    if (id) {      
+    fetchExerciseGroup()
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("exercise list: ", exerciseGroup?.exerciseList)
+    const tmpUsedExercises: number[] = []
+    const tmpDynamicFields: React.SetStateAction<{ id: number; key: number; name: string; }[]> = []
+    const tmpFormData = {
+        name: exerciseGroup == undefined ? '' : exerciseGroup.name, 
+        open: exerciseGroup == undefined ? false : exerciseGroup.open
+}
+    exerciseGroup?.exerciseList.map(exercise => {  
+        console.log("exercise", exercise)      
+        tmpUsedExercises.push(exercise.id)
+        const newId = tmpDynamicFields.length + 1;
+        tmpDynamicFields.push({ key: newId, id: exercise.id, name: generateExerciseLabel(exercise)});
+      })
+    setUsedExercises(tmpUsedExercises)
+    setDynamicFields(tmpDynamicFields)  
+    setFormData(tmpFormData)    
+  }, [exerciseGroup])
 
   useEffect(() => {
     const tmp = [
@@ -44,7 +87,7 @@ const ExerciseGroupForm: React.FC = () => {
       ...exercises
         .filter((exercise) => !usedExercises.includes(exercise.id))
         .map((exercise) => ({
-          label: `${exercise.title} - ${exercise.tag} - ${exercise.difficulty}`,
+          label: generateExerciseLabel(exercise),
           id: exercise.id,
         })),
     ];
@@ -66,6 +109,16 @@ const ExerciseGroupForm: React.FC = () => {
     const newId = dynamicFields.length + 1;
     setDynamicFields([...dynamicFields, { key: newId, id: -1, name: "" }]);
   };
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm('Tem certeza que deseja apagar esse grupo de exercícios?');
+    if(confirmed){
+        await bocaJuniorsAPI.delete(
+            `/exercise-group/${id}`
+        );
+        navigate(`/exercise-group/`);
+    }
+  }
 
   const handleDynamicFieldChange = (
     currentField: { id: number; label: string } | null,
@@ -106,11 +159,11 @@ const ExerciseGroupForm: React.FC = () => {
 
     console.log(data);
 
-    const response = await bocaJuniorsAPI.post("/exercise-group", data);
+    const response = await bocaJuniorsAPI.put(`/exercise-group/${id}`, data);
 
     console.log(response.data);
 
-    navigate(`/exercise-group/${response.data.id}`);
+    navigate(`/exercise-group/${id}`);
   };
 
   return (
@@ -159,9 +212,15 @@ const ExerciseGroupForm: React.FC = () => {
             </Button>
           </FormFieldContainer>
         </form>
+        <Stack marginTop={"48px"}>
+
+            <Button variant="contained" onClick={handleDelete} color="error" >
+                Apagar
+                </Button>
+        </Stack>
       </Container>
     </>
   );
 };
 
-export default ExerciseGroupForm;
+export default ExerciseGroupEditForm;

@@ -7,28 +7,27 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import bocaJuniorsAPI from "../../shared/boca-juniors-api";
 import { Exercise } from "../../types/Exercise";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button, Container, Icon, Stack, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useUser } from "../../context/auth";
-import { Submission, getStatusDescription } from "../../types/Submission";
+import { Submission } from "../../types/Submission";
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 
-export default function SubmissionTable() {
+export default function UserSubmission() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const {user, setUser} = useUser()
+  const { username, exerciseId } = useParams();
 
   const listSubmissions = async () => {
     const params = {
-      username: user
+      username: username,
+      exerciseId: exerciseId
     }
     const response = await bocaJuniorsAPI.get("/submission", {
       params: params
     });
-
-    console.log("data", response.data)
   
     return response.data;
   }
@@ -50,7 +49,8 @@ export default function SubmissionTable() {
             <TableHead>
               <TableRow>
                 <TableCell>Exercício</TableCell>
-                <TableCell align="right">Resultado</TableCell>                
+                <TableCell align="center">Resultado</TableCell>                
+                <TableCell align="right">Usuário</TableCell>                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -64,11 +64,14 @@ export default function SubmissionTable() {
                   <TableCell component="th" scope="row">
                     {submission.exercise.title}
                   </TableCell>                
-                  <TableCell align="right" component="th" scope="row">
+                  <TableCell align="center" component="th" scope="row">
                     <Typography>
-                    {getStatusDescription(submission.status)}
+                    {submission.status}
                     </Typography>
                   </TableCell>
+                  <TableCell component="th" scope="row" align="right">
+                    {username}
+                  </TableCell>   
                 </TableRow>
               ))}
             </TableBody>

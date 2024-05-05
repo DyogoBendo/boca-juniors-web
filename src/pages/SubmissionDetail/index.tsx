@@ -50,9 +50,9 @@ export default function SubmissionDetail() {
                 <Typography variant="h6">
                   {submission.exercise.title}
                 </Typography>
-                <Icon>
-                  {submission.accepted ? <CheckIcon /> : <ClearIcon />}
-                </Icon>
+                <Typography>
+                  {submission.status}
+                </Typography>
               </Stack>
               <Stack
                 padding={"16px"}

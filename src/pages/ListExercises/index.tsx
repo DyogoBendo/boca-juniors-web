@@ -9,9 +9,10 @@ import bocaJuniorsAPI from "../../shared/boca-juniors-api";
 import { Exercise } from "../../types/Exercise";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button, Container, Stack } from "@mui/material";
+import { Button, Container, Icon, Stack } from "@mui/material";
 import Header from "../../components/Header";
 import { useUser } from "../../context/auth";
+import EditIcon from '@mui/icons-material/Edit';
 
 async function listExercise() {
   const response = await bocaJuniorsAPI.get("/exercise");
@@ -41,6 +42,7 @@ export default function ExerciseTable() {
                 <TableCell>Título</TableCell>
                 <TableCell align="center">Tag</TableCell>
                 <TableCell align="right">Dificuldade</TableCell>
+                {user === "admin" && (<TableCell align="center">Editar</TableCell>)}      
               </TableRow>
             </TableHead>
             <TableBody>
@@ -60,6 +62,8 @@ export default function ExerciseTable() {
                   <TableCell align="right" component="th" scope="row">
                     {exercise.difficulty}
                   </TableCell>
+                  {user === "admin" && (<TableCell align="center" component={Link}
+                        to={`/exercise/edit/${exercise.id}`}><Icon><EditIcon /></Icon></TableCell>)}                                               
                 </TableRow>
               ))}
             </TableBody>

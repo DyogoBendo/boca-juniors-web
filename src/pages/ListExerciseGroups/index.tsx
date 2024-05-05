@@ -10,10 +10,13 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import bocaJuniorsAPI from "../../shared/boca-juniors-api";
 import { ExerciseGroup } from "../../types/ExerciseGroup";
 import { Link } from "react-router-dom";
-import { Button, Container, Stack } from "@mui/material";
+import { Button, Container, Icon, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useUser } from "../../context/auth";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 async function fetchData() {
   const response = await bocaJuniorsAPI.get("/exercise-group");
@@ -30,7 +33,8 @@ export default function ExerciseGroupTable() {
       console.log("trying to fetch data...");
       try {
         const data = await fetchData(); // Fetch data
-        setExerciseGroups(data);
+        const tmp = user !== "admin" ? data.filter((exerciseGroup: { open: boolean; }) => exerciseGroup.open) : data
+        setExerciseGroups(tmp);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -52,27 +56,36 @@ export default function ExerciseGroupTable() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nome</TableCell>
-                  <TableCell align="right">Aberto</TableCell>
+                  {user === "admin" && (<TableCell align="right">Aberto</TableCell>)}                  
+                  <TableCell align="center">Visualizar</TableCell>
+                  {user === "admin" && (<TableCell align="center">Editar</TableCell>)}                  
                 </TableRow>
               </TableHead>
               <TableBody>
                 {exerciseGroups.map((exerciseGroup) => (
                   <TableRow
                     key={exerciseGroup.id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    component={Link}
-                    to={`/exercise-group/${exerciseGroup.id}`}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}                    
                   >
                     <TableCell component="th" scope="row">
                       {exerciseGroup.name}
                     </TableCell>
-                    <TableCell align="right">
+                    {user === "admin" && (
+                      <TableCell align="right">
                       {exerciseGroup.open ? (
                         <CheckBoxIcon />
                       ) : (
                         <CheckBoxOutlineBlankIcon />
                       )}
                     </TableCell>
+                    )}
+                    <TableCell align="center" component="th" scope="row" component={Link}
+                        to={`/exercise-group/${exerciseGroup.id}`}>
+                          <Icon><VisibilityIcon /></Icon>
+                        </TableCell>
+                        {user === "admin" && (<TableCell align="center" component={Link}
+                        to={`/exercise-group/edit/${exerciseGroup.id}`}><Icon><EditIcon /></Icon></TableCell>)}
+                  
                   </TableRow>
                 ))}
               </TableBody>
