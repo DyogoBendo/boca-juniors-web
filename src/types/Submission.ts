@@ -51,4 +51,16 @@ export function getStatusDescription(status: SubmissionStatus): string {
         default:
             return "";
     }
+
 }
+
+export function getSubmissionColor(status: SubmissionStatus): string{
+    switch (status) {
+        case SubmissionStatus.AC:
+            return "#66bb6a";
+        case SubmissionStatus.WA:
+            return "#f44336";
+        default:
+            return "#ffa726";
+    }
+}   

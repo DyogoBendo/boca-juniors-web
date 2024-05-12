@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Button, Container, Icon, Stack, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useUser } from "../../context/auth";
-import { Submission, getStatusDescription } from "../../types/Submission";
+import { Submission, SubmissionStatus, getStatusDescription, getSubmissionColor } from "../../types/Submission";
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -59,14 +59,14 @@ export default function SubmissionTable() {
                   key={submission.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   component={Link}
-                  to={`/submission/${submission.id}`}
+                  to={`/submission/${submission.id}`}          
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row" bgcolor={getSubmissionColor(submission.status)}>
                     {submission.exercise.title}
                   </TableCell>                
-                  <TableCell align="right" component="th" scope="row">
-                    <Typography>
-                    {getStatusDescription(submission.status)}
+                  <TableCell align="right" component="th" scope="row" bgcolor={getSubmissionColor(submission.status)}>                    
+                    <Typography bgcolor={getSubmissionColor(submission.status)} align="right">
+                      {getStatusDescription(submission.status)}
                     </Typography>
                   </TableCell>
                 </TableRow>
