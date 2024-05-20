@@ -68,7 +68,7 @@ export default function SubmissionDetail() {
                 borderTop={0}
                 marginTop={"0"}
               >
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom style={{ whiteSpace: 'pre-line' }}>
                   {submission.sourceCode}
                 </Typography>
               </Stack>

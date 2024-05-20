@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Button, Container, Icon, Stack, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useUser } from "../../context/auth";
-import { Submission } from "../../types/Submission";
+import { Submission, getSubmissionColor } from "../../types/Submission";
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -61,15 +61,15 @@ export default function UserSubmission() {
                   component={Link}
                   to={`/submission/${submission.id}`}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row" bgcolor={getSubmissionColor(submission.status)}>
                     {submission.exercise.title}
                   </TableCell>                
-                  <TableCell align="center" component="th" scope="row">
+                  <TableCell align="center" component="th" scope="row" bgcolor={getSubmissionColor(submission.status)}>
                     <Typography>
                     {submission.status}
                     </Typography>
                   </TableCell>
-                  <TableCell component="th" scope="row" align="right">
+                  <TableCell component="th" scope="row" align="right" bgcolor={getSubmissionColor(submission.status)}>
                     {username}
                   </TableCell>   
                 </TableRow>

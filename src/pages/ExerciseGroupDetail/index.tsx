@@ -130,6 +130,7 @@ export default function ExerciseGroupDetail() {
                           {usersSubmissionsFromExerciseGroup?.exerciseList.map(
                             (exercise) => (
                               <TableCell
+                              align="center"
                                 key={exercise.id}
                               >{`${exercise.id}-${exercise.title}`}</TableCell>
                             )
@@ -152,8 +153,12 @@ export default function ExerciseGroupDetail() {
                                 (exercise) => (
                                   <TableCell scope="row"
                                     component={Link}
+                                    align="center"
                                     to={usersSubmissionsFromExerciseGroup.userExerciseStatus[`${username},${exercise.id}`] === undefined ? "": `/submission/user/${username}/exercise/${exercise.id}` 
                                     }
+                                    style={{backgroundColor: usersSubmissionsFromExerciseGroup.userExerciseStatus[`${username},${exercise.id}`] === undefined ? "white": 
+                                    usersSubmissionsFromExerciseGroup.userExerciseStatus[`${username},${exercise.id}`] ? "#66bb6a" : "#f44336" 
+                                    }} 
                                   >
                                     {usersSubmissionsFromExerciseGroup.userExerciseStatus[`${username},${exercise.id}`] === undefined ? "": 
                                       usersSubmissionsFromExerciseGroup.userExerciseStatus[`${username},${exercise.id}`] ? <CheckIcon /> : <ClearIcon /> 

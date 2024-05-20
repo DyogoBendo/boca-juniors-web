@@ -60,6 +60,8 @@ export function getSubmissionColor(status: SubmissionStatus): string{
             return "#66bb6a";
         case SubmissionStatus.WA:
             return "#f44336";
+        case SubmissionStatus.IQ:
+            return "#fff";
         default:
             return "#ffa726";
     }
