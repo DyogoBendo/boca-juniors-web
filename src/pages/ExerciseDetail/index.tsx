@@ -70,7 +70,7 @@ export default function ExerciseDetail() {
                 {exercise.title}
               </Typography>
 
-              <Typography variant="body1" gutterBottom>
+              <Typography variant="body1" style={{ whiteSpace: 'pre-line' }} gutterBottom>
                 {exercise.description}
               </Typography>
               {exercise.examples.map((example) => (
